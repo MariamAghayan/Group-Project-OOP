@@ -1,8 +1,9 @@
 
 public class Main {
     public static void main(String[] args){
-        Card card = new Card();
-        card.array();
-        card.twelve();
+        Card thr = new Card();
+        thr.array();
+        thr.copy();
+        thr.twelve();
     }
 }
