@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Card implements Cloneable{
     enum Shape {OVAL, DIAMOND, SQUIGGLE}
 
@@ -59,7 +61,7 @@ public class Card implements Cloneable{
         return "[ " + shape + " " + color + " " + shade + " " + number + " ]";
     }
 
-    public Card[] array = new Card [81];
+    public Card[] array = new Card[81];
 
     public Card[] array() {
         Card cardNew;
@@ -75,7 +77,7 @@ public class Card implements Cloneable{
             }
         }
         return array;
-}
+    }
     @Override
     public boolean equals(Object obj) {
         if(obj == null || obj.getClass() != Card.class){
@@ -83,17 +85,17 @@ public class Card implements Cloneable{
         }
         Card objectOther = (Card) obj;
         return  this.shape == objectOther.shape && this.color == objectOther.color &&
-        this.shade == objectOther.shade && this.number == objectOther.number;
+                this.shade == objectOther.shade && this.number == objectOther.number;
     }
 
-    public Card[] twelve(){
-        Card[] arrayNew = new Card[12];
+    ArrayList<Card> arrayNew = new ArrayList<>();
+    public ArrayList<Card> twelve(){
         int num;
-        for(int i = 0; i < arrayNew.length;) {
-                num = (int) (Math.random() * 80);
+        for(int i = 0; i < 12;) {
+            num = (int) (Math.random() * 80);
             if (array2[num] != null) {
-                arrayNew[i] = array2[num];
-                System.out.println(arrayNew[i]);
+                arrayNew.add(i, array2[num]);
+                System.out.println(arrayNew.get(i));
                 array2[num] = null;
                 i++;
             }
@@ -104,11 +106,11 @@ public class Card implements Cloneable{
     public  Card[] array2 = new Card[81];
     public Card[] copy() {
 
-    for (int i = 0; i < array2.length; i++)
-        if (array[i] != null)
-            array2[i] = this.array[i].clone();
-    return array2;
-}
+        for (int i = 0; i < array2.length; i++)
+            if (array[i] != null)
+                array2[i] = this.array[i].clone();
+        return array2;
+    }
 
     public Card clone() {
         try {
@@ -119,7 +121,8 @@ public class Card implements Cloneable{
             return null;
         }
     }
-    
+
+
     public boolean isASet(Card first, Card second, Card third){
         if((first.shape == second.shape && first.shape == third.shape) ||
                 first.shape != second.shape && first.shape != third.shape && second.shape != third.shape) {
@@ -146,5 +149,53 @@ public class Card implements Cloneable{
         return false;
     }
 
-}
+    public  Card[] array3;
+    ArrayList<Card[]> objectJan;
+    public ArrayList<Card[]> allSets()    {
+        int j, k;
+        objectJan = new ArrayList<>();
+        for (int i = 0; i < arrayNew.size()-2; i++){
+            for (j = i+1; j < arrayNew.size()-1; j++){
+                for (k = j+1; k < arrayNew.size(); k++){
+                    if (isASet(arrayNew.get(i),arrayNew.get(j),arrayNew.get(k))){
+                        array3 = new Card[3];
+                        array3[0] = arrayNew.get(i);
+                        array3[1] = arrayNew.get(j);
+                        array3[2] = arrayNew.get(k);
+                        objectJan.add(array3);
+                    }
+                }
+            }
+        }
+        System.out.println();
 
+        for(int i = 0; i < objectJan.size(); i++){
+                System.out.print(objectJan.get(i)[0]);
+                System.out.print(objectJan.get(i)[1]);
+                System.out.print(objectJan.get(i)[2]);
+            System.out.println();
+
+
+        }
+        return objectJan;
+    }
+    public ArrayList<Card> addThree(){
+        if (objectJan.isEmpty()){
+            int num;
+            for(int i = 0; i < 3;) {
+                num = (int) (Math.random() * 80);
+                if (array2[num] != null) {
+                    arrayNew.add(arrayNew.size(),array2[num]);
+                    System.out.println("added");
+                    System.out.println(arrayNew.get(arrayNew.size()-1));
+                    array2[num] = null;
+                    i++;
+                }
+            }
+            if (allSets().isEmpty())
+                System.out.println("ended");
+        }
+        return arrayNew;
+    }
+
+}
