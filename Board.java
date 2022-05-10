@@ -22,7 +22,6 @@ public class Board extends Card implements Cloneable{
                     for (int a = 0; a < numberArr.length; a++) {
                         cardNew = new Card(shapeArr[i], colorArr[j], shadeArr[k], numberArr[a]);
                         array[h++] = cardNew;
-                        System.out.println(cardNew);
                     }
                 }
             }
@@ -39,7 +38,28 @@ public class Board extends Card implements Cloneable{
                 this.getShade() == objectOther.getShade() && this.getNumber() == objectOther.getNumber();
     }
 
-    ArrayList<Card> arrayNew = new ArrayList<>();
+    public ArrayList<Card> arrayNew = new ArrayList<>();
+    public Card[] array2;
+
+    public Card[] copy() throws CloneNotSupportedException {
+
+        array2 = new Card[81];
+        for (int i = 0; i < array2.length; i++)
+            if (array[i] != null)
+                array2[i] = this.array[i].clone();
+        return array2;
+    }
+
+    public Board clone() {
+        try {
+            Board copy = (Board) super.clone();
+            copy.array = this.array();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
     public Card[] twelve(){
         int num;
         for(int i = 0; i < 12;) {
@@ -53,26 +73,6 @@ public class Board extends Card implements Cloneable{
 
         }
         return array2;
-    }
-
-    Card[] array2 = new Card[12];
-    public Card[] copy() throws CloneNotSupportedException {
-
-        array2 = new Card[81];
-        for (int i = 0; i < array2.length; i++)
-            if (array[i] != null)
-                array2[i] =  this.array[i].clone();
-        return array2;
-    }
-
-    public Board clone() {
-        try {
-            Board copy = (Board) super.clone();
-            copy.array = this.array();
-            return copy;
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
     }
 
 
@@ -123,8 +123,8 @@ public class Board extends Card implements Cloneable{
         System.out.println();
 
         for(int i = 0; i < objectJan.size(); i++){
-            System.out.print(objectJan.get(i)[0]);
-            System.out.print(objectJan.get(i)[1]);
+            System.out.print(objectJan.get(i)[0] + " ");
+            System.out.print(objectJan.get(i)[1] + " ");
             System.out.print(objectJan.get(i)[2]);
             System.out.println();
 
@@ -151,3 +151,4 @@ public class Board extends Card implements Cloneable{
         return arrayNew;
     }
 }
+
