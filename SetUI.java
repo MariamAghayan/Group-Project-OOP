@@ -2,6 +2,7 @@ package set.ui;
 
 import set.core.Board;
 import set.core.Card;
+import set.core.Player;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,28 +10,35 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SetUI extends JFrame {
     ArrayList<SetCard> playthings;
     SetCard button;
     JPanel panel;
-    private Board board = new Board();
-
+    private Player player = new Player();
+    JPanel playerScores = new JPanel();
+    JLabel playerPoints = new JLabel("Player1: "+ player.getPoints());
+    private Board board= new Board();
+    JFrame setWindow = new JFrame();
     public SetUI() throws CloneNotSupportedException {
-        JFrame setWindow = new JFrame();
-        setWindow.setSize(520, 550);
+        fillTheBoard();
+        setWindow.setSize(700, 700);
         setWindow.setTitle("Set Game");
         setWindow.setLocationRelativeTo( null );
-        setWindow.setLayout(new FlowLayout(FlowLayout.CENTER));
+        setWindow.setLayout(new GridLayout(2,1, 20, 20));
         setWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
         setWindow.setResizable(false);
-        fillTheBoard();
+        playerScores.add(playerPoints);
+        playerScores.setSize(200,50);
+        playerScores.setLayout(new GridLayout(4,4,10,10));
         Dimension dim = new Dimension(480, 500);
         panel.setMinimumSize(dim);
         panel.setPreferredSize(dim);
         panel.setSize(dim);
         panel.setLayout(new GridLayout(3, 4, 4, 4));
+        setWindow.add(playerScores);
         setWindow.add(panel);
         setWindow.setVisible(true);
     }
@@ -88,26 +96,32 @@ public class SetUI extends JFrame {
                         num = (int) (Math.random() * (board.array81Copy.size()-1));
                         board.arrayNew.set(coordinates[i], board.array81Copy.get(num));
                         board.array81Copy.remove(num);
+                        playthings.get(coordinates[i]).setBorder(original);
                         i++;
                     }
-                    for (int i = 0; i < 3; i++) {
-                        if (playthings.size() >= 12){
+                    player.addPoints(100);
+                    updateScore();
+
+                    System.out.println(player.getPoints());
+                    for (int i = 2; i >= 0; i--) {
                             if (board.array81Copy.size() < 3){
                                 board.arrayNew.remove(coordinates[i]);
                                 playthings.remove(coordinates[i]);
                                 panel.remove(coordinates[i]);
                             }
-                            playthings.get(coordinates[i]).setBorder(original);
-                        }
                     }
                     panel.revalidate();
                     panel.repaint();
                     board.allSets();
-                    if (board.objectJan.size() == 0){
+                    if (board.objectJan.isEmpty()){
+                        board.addThree();
                         fillTheBoard();
+                        setWindow.revalidate();
+                        setWindow.repaint();
                     }
                     System.out.println("Great job!");
-                } else {
+                }
+                else {
                     for (int i = 0; i < coordinates.length; i++) {
                         playthings.get(coordinates[i]).setBorder(new LineBorder(new Color(164, 11, 14), 4));
                     }
@@ -117,13 +131,31 @@ public class SetUI extends JFrame {
                 for (int i = 0; i < playthings.size(); i++) {
                     playthings.get(i).displayCards(board.arrayNew.get(i));
                 }
-            }else clickNumber = 3;
+            } else clickNumber = 3;
+            System.out.println(board.array81Copy.size());
+            for (int i =0; i< 3; i++) {
+                System.out.println(coordinates[i]);
             }
-
         }
-
+    }
+    public void updateScore(){
+        playerPoints = new JLabel("Player1: "+ player.getPoints());
+    }
     public void fillTheBoard() throws CloneNotSupportedException {
         panel = new JPanel();
+        setWindow.setSize(520, 550);
+        setWindow.setTitle("Set Game");
+        setWindow.setLocationRelativeTo( null );
+        setWindow.setLayout(new FlowLayout(FlowLayout.CENTER));
+        setWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setWindow.setResizable(false);
+        Dimension dim = new Dimension(480, 500);
+        panel.setMinimumSize(dim);
+        panel.setPreferredSize(dim);
+        panel.setSize(dim);
+        panel.setLayout(new GridLayout(3, 4, 4, 4));
+        setWindow.add(panel);
+        setWindow.setVisible(true);
         playthings = new ArrayList<>();
         for (int i = 0; i < board.arrayNew.size(); i++) {
             button = new SetCard(i);
@@ -136,6 +168,7 @@ public class SetUI extends JFrame {
             playthings.get(i).displayCards(board.arrayNew.get(i));
         }
         original = playthings.get(0).getBorder();
+        setWindow.add(panel);
     }
 
 }
