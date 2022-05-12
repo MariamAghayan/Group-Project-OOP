@@ -38,16 +38,15 @@ public class Board extends Card implements Cloneable{
                 this.getShade() == objectOther.getShade() && this.getNumber() == objectOther.getNumber();
     }
 
-    public ArrayList<Card> arrayNew = new ArrayList<>();
-    public Card[] array2;
+    public ArrayList<Card> array81Copy;
 
-    public Card[] copy() throws CloneNotSupportedException {
+    public ArrayList<Card> copy() throws CloneNotSupportedException {
 
-        array2 = new Card[81];
-        for (int i = 0; i < array2.length; i++)
-            if (array[i] != null)
-                array2[i] = this.array[i].clone();
-        return array2;
+        array81Copy = new ArrayList<>();
+        for (int i = 0; i < array.length; i++){
+            array81Copy.add(this.array[i].clone());
+        }
+        return array81Copy;
     }
 
     public Board clone() {
@@ -60,19 +59,18 @@ public class Board extends Card implements Cloneable{
         }
     }
 
-    public Card[] twelve(){
+    public ArrayList<Card> arrayNew = new ArrayList<>();
+    public ArrayList<Card> twelve(){
         int num;
         for(int i = 0; i < 12;) {
-            num = (int) (Math.random() * 80);
-            if (array2[num] != null) {
-                arrayNew.add(i, array2[num]);
-                System.out.println(arrayNew.get(i));
-                array2[num] = null;
-                i++;
-            }
+            num = (int) (Math.random() * (array81Copy.size()-1));
+            arrayNew.add(i, array81Copy.get(num));
+            System.out.println(arrayNew.get(i));
+            array81Copy.remove(num);
+            i++;
 
         }
-        return array2;
+        return array81Copy;
     }
 
 
@@ -103,8 +101,8 @@ public class Board extends Card implements Cloneable{
     }
 
     public  Card[] array3;
-    ArrayList<Card[]> objectJan;
-    public ArrayList<Card[]> allSets()    {
+    public ArrayList<Card[]> objectJan;
+    public ArrayList<Card[]> allSets(){
         int j, k;
         objectJan = new ArrayList<>();
         for (int i = 0; i < arrayNew.size()-2; i++){
@@ -136,14 +134,14 @@ public class Board extends Card implements Cloneable{
         if (objectJan.isEmpty()){
             int num;
             for(int i = 0; i < 3;) {
-                num = (int) (Math.random() * 80);
-                if (array2[num] != null) {
-                    arrayNew.add(arrayNew.size(),array2[num]);
+                if(array81Copy.size() >= 3){
+                    num = (int) (Math.random() * (array81Copy.size()-1));
+                    arrayNew.add(arrayNew.size(), array81Copy.get(num));
                     System.out.println("added");
                     System.out.println(arrayNew.get(arrayNew.size()-1));
-                    array2[num] = null;
+                    array81Copy.remove(num);
                     i++;
-                }
+                } else System.out.println("the game ended");
             }
             if (allSets().isEmpty())
                 System.out.println("ended");
@@ -151,4 +149,3 @@ public class Board extends Card implements Cloneable{
         return arrayNew;
     }
 }
-
