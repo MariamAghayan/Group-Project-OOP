@@ -58,7 +58,6 @@ public class SetUI extends JFrame {
         winnerName.setBackground(new Color(50,120,120));
         winnerName.setFont(new Font("Monospaced", Font.BOLD, 30));
         winnerName.setForeground(Color.WHITE);
-        winnerName.setText("<html>Game Over<br/>" + winnerOfTheGame() + " WON!!!");
         EndingListener buttonEar = new EndingListener();
         winnerName.addActionListener(buttonEar);
         winner.add(winnerName);
@@ -151,7 +150,11 @@ public class SetUI extends JFrame {
                             fillTheBoard();
                             panel.setLayout(new GridLayout(3, 4, 4, 4));
                             setWindow.add(panel, BorderLayout.CENTER);
-                        } else winner.setVisible(true);
+                        }
+                        else{
+                            winnerName.setText("<html>Game Over<br/>" + winnerOfTheGame() + " WON!!!");
+                            winner.setVisible(true);
+                        }
                     }
                     System.out.println("Great job!");
                     updateScore(100);
@@ -173,12 +176,15 @@ public class SetUI extends JFrame {
         }
     }
     public String winnerOfTheGame(){
-        if (player1.getPoints() > player2.getPoints())
+        if (player1.getPoints() > player2.getPoints()){
             return player1.getName();
-        else if(player1.getPoints() < player2.getPoints())
+        }
+        else if(player1.getPoints() < player2.getPoints()){
             return player2.getName();
-        else
+        }
+        else {
             return "No one";
+        }
     }
     public void updateScore(int n) {
         if (getTurn()) {
