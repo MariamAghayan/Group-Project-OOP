@@ -18,54 +18,58 @@ public class SetUI extends JFrame {
     JPanel panel;
     private boolean turn = false;
     private Board board= new Board();
-    JFrame opening = new JFrame();
     JFrame setWindow = new JFrame();
+    JFrame winner = new JFrame();
+    JButton winnerName = new JButton();
     JFrame inputName;
     Player player1 = new Player();
     Player player2 = new Player();
     JLabel player1Points;
     JLabel player2Points;
-    ImageIcon icon  = new ImageIcon( "images\\setimage.png");
-    JButton endButton = new JButton();
-    JLabel playerScores = new JLabel();
+    JPanel playerScores = new JPanel();
+
     public SetUI() throws CloneNotSupportedException {
         fillTheBoard();
-        opening.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        endButton.setIcon(icon);
-        endButton.setBackground(Color.red);
-        EndingListener buttonEar = new EndingListener();
-        endButton.addActionListener(buttonEar);
-        opening.add(endButton);
         inputName = new JFrame();
         String name = JOptionPane.showInputDialog(inputName, "Enter Player 1 name");
         String name1 = JOptionPane.showInputDialog(inputName, "Enter Player 2 name");
         player1.setName(name);
         player2.setName(name1);
         player1Points = new JLabel(player1.getName() + ":  " + player1.getPoints());
-        player2Points = new JLabel(player2.getName() + ":  " + player2.getPoints());
-        player1Points.setFont(new Font("Helvetica", Font.BOLD, 25));
-        player2Points.setFont(new Font("Helvetica", Font.BOLD, 25));
-        setWindow.setSize(700, 700);
-        setWindow.setTitle("Set Game");
-        setWindow.setLocationRelativeTo( null );
-        setWindow.setLayout(new GridLayout(2,1, 20, 20));
-        setWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setWindow.setResizable(false);
+        player2Points = new JLabel( player2.getName() + ":  " + player2.getPoints());
+        player1Points.setFont(new Font("Monospaced", Font.BOLD, 30));
+        player2Points.setFont(new Font("Monospaced", Font.BOLD, 30));
+        playerScores.setSize(580,60);
+        playerScores.setLayout(new GridLayout(1,2,30,50));
         playerScores.add(player1Points);
         playerScores.add(player2Points);
-        playerScores.setSize(200,50);
-        playerScores.setLayout(new GridLayout(4,4,10,10));
-        panel.setMinimumSize(dim);
-        panel.setPreferredSize(dim);
-        panel.setSize(dim);
+        setWindow.setSize(600, 650);
+        setWindow.setTitle("Set Game");
+        setWindow.setLocationRelativeTo( null );
+        setWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setWindow.setResizable(false);
         panel.setLayout(new GridLayout(3, 4, 4, 4));
-        opening.setVisible(true);
-        opening.setSize(400,400);
-        setWindow.add(playerScores);
-        setWindow.add(panel);
+        setWindow.add(playerScores, BorderLayout.NORTH);
+        setWindow.add(panel, BorderLayout.CENTER);
         setWindow.setVisible(true);
+        winner.setSize(400, 400);
+        winner.setResizable(false);
+        winner.setLocationRelativeTo( null );
+        winnerName.setBackground(new Color(50,120,120));
+        winnerName.setFont(new Font("Monospaced", Font.BOLD, 30));
+        winnerName.setForeground(Color.WHITE);
+        winnerName.setText("<html>Game Over<br/>" + winnerOfTheGame() + " WON!!!");
+        EndingListener buttonEar = new EndingListener();
+        winnerName.addActionListener(buttonEar);
+        winner.add(winnerName);
     }
-    Dimension dim = new Dimension(480, 500);
+    public class EndingListener implements ActionListener{
+        public void actionPerformed(ActionEvent e)
+        {
+            System.exit(0);
+        }
+    }
+
     ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -77,12 +81,6 @@ public class SetUI extends JFrame {
             }
         }
     };
-    public class EndingListener implements ActionListener{
-        public void actionPerformed(ActionEvent e)
-        {
-            System.exit(0);
-        }
-        }
 
     private Card firstCard;
     private Card secondCard;
@@ -126,14 +124,8 @@ public class SetUI extends JFrame {
                                 board.arrayNew.trimToSize();
                                 setWindow.remove(panel);
                                 fillTheBoard();
-                            panel.setMinimumSize(dim);
-                            panel.setPreferredSize(dim);
-                            panel.setSize(dim);
                             panel.setLayout(new GridLayout(3, 4, 4, 4));
-                            opening.setVisible(true);
-                            opening.setSize(400,400);
-                            setWindow.add(playerScores);
-                            setWindow.add(panel);
+                            setWindow.add(panel, BorderLayout.CENTER);
                             setWindow.setVisible(true);
                         }
                     }
@@ -153,24 +145,19 @@ public class SetUI extends JFrame {
                     panel.repaint();
                     board.allSets();
                     if (board.objectJan.isEmpty()){
-                        if(board.array81Copy.size() >= 3){
+                        if(board.array81Copy.size() >= 3 &&  board.array81Copy.size() != 15){
                             board.addThree();
                             setWindow.remove(panel);
                             fillTheBoard();
-                            panel.setMinimumSize(dim);
-                            panel.setPreferredSize(dim);
-                            panel.setSize(dim);
                             panel.setLayout(new GridLayout(3, 4, 4, 4));
-                            opening.setVisible(true);
-                            opening.setSize(400,400);
-                            setWindow.add(playerScores);
-                            setWindow.add(panel);
-                        } else System.out.println("End of the game. Congratulations!");
+                            setWindow.add(panel, BorderLayout.CENTER);
+                        } else winner.setVisible(true);
                     }
                     System.out.println("Great job!");
-                    updateScore();
+                    updateScore(100);
                 }
                 else {
+                    updateScore(-50);
                     for (int i = 0; i < coordinates.length; i++) {
                         playthings.get(coordinates[i]).setBorder(new LineBorder(new Color(164, 11, 14), 4));
                     }
@@ -185,13 +172,32 @@ public class SetUI extends JFrame {
 
         }
     }
-    public void updateScore() {
+    public String winnerOfTheGame(){
+        if (player1.getPoints() > player2.getPoints())
+            return player1.getName();
+        else if(player1.getPoints() < player2.getPoints())
+            return player2.getName();
+        else
+            return "No one";
+    }
+    public void updateScore(int n) {
         if (getTurn()) {
-            player1.addPoints(100);
-            player1Points.setText(player1.getName() +": " + player1.getPoints());
+            if(n>0){
+                player1Points.setForeground(new Color(65, 180, 45));
+            }else  player1Points.setForeground(new Color(200, 30, 45));
+
+            player2Points.setForeground(new Color(0,0,0));
+            player1.addPoints(n);
+            player1Points.setText(player1.getName()+ ": "+ player1.getPoints());
         } else {
-            player2.addPoints(100);
-            player2Points.setText(player2.getName() +": " + player2.getPoints());
+            if(n>0){
+                player2Points.setForeground(new Color(65, 180, 45));
+            }else  player2Points.setForeground(new Color(200, 30, 45));
+
+            player1Points.setForeground(new Color(0,0,0));
+            player2.addPoints(n);
+            player2Points.setText( player2.getName() + ":  " + player2.getPoints());
+
         }
     }
     public boolean getTurn(){
